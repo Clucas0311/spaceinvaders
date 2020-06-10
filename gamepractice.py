@@ -1,4 +1,5 @@
 import pygame
+import random
 
 pygame.init()  # initialize pygame
 screen = pygame.display.set_mode((800, 600))  # size of the window
@@ -9,14 +10,26 @@ pygame.display.set_icon(icon)
 
 # Player
 player_img = pygame.image.load('space-invaders.png')
-playerX = 370  # ship position at postion x coodinate (800) length
-playerY = 480  # ship postion at y coordinates the (600) widith
+playerX = 370  # ship position left and right
+playerY = 480  # ship postion  top to bottom
 playerX_change = 0
+
+# Enemy
+enemy_img = pygame.image.load('ufo.png')
+enemyX = random.randint(0, 800)  # alien position at postion (wideness) generates at random
+enemyY = random.randint(50, 150)  # alien postion at random   (lenght) generates at random
+enemyX_change = 0
 
 
 def player(x, y):
     # screen.blit means to draw the image on the screen
     screen.blit(player_img, (x, y))
+
+
+def enemy(x, y):
+    # screen.blit means to draw the image on the screen
+    screen.blit(enemy_img, (x, y))
+
 
     # it needs three parameters the image, and the coordinates of the player
 game_loop = True
@@ -45,4 +58,5 @@ while game_loop:
     elif playerX >= 736:
         playerX = 736
     player(playerX, playerY)
+    enemy(enemyX, enemyY)
     pygame.display.update()  # updates the window requirement
