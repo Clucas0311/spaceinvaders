@@ -8,7 +8,7 @@ icon = pygame.image.load('alien.png')
 pygame.display.set_icon(icon)
 
 # Player
-player_img = pygame.image.load('rocket.png')
+player_img = pygame.image.load('space-invaders.png')
 playerX = 370  # ship position at postion x coodinate (800) length
 playerY = 480  # ship postion at y coordinates the (600) widith
 playerX_change = 0
