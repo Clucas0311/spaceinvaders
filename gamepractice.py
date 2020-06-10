@@ -2,7 +2,7 @@ import pygame
 import random
 
 pygame.init()  # initialize pygame
-screen = pygame.display.set_mode((800, 600))  # size of the window
+screen = pygame.display.set_mode((800, 600))  # size of the window(w x l)
 
 pygame.display.set_caption("Space Invaders")  # Title and display
 icon = pygame.image.load('alien.png')
@@ -14,11 +14,12 @@ playerX = 370  # ship position left and right
 playerY = 480  # ship postion  top to bottom
 playerX_change = 0
 
-# Enemy
+# Enemy position
 enemy_img = pygame.image.load('ufo.png')
 enemyX = random.randint(0, 800)  # alien position at postion (wideness) generates at random
 enemyY = random.randint(50, 150)  # alien postion at random   (lenght) generates at random
-enemyX_change = 0
+enemyX_change = 1
+enemyY_change = 40
 
 
 def player(x, y):
@@ -47,9 +48,9 @@ while game_loop:
                 playerX_change = -1
             if event.key == pygame.K_RIGHT:
                 playerX_change = 1  # When the player moves to the right it increases
-        if event. type == pygame.KEYUP:
+        if event. type == pygame.KEYUP:  # Key is released
             if event.key == pygame.K_LEFT or event.key == pygame. K_RIGHT:
-                playerX_change = 0  # to make space ship be at a standstill
+                playerX_change = 0  # to make space ship be at motionless
 
     playerX += playerX_change  # use this to increase the value of player X as the change moves
     # Create a boundary for the ship so it does move off the screen
@@ -57,6 +58,15 @@ while game_loop:
         playerX = 0
     elif playerX >= 736:
         playerX = 736
+
+    enemyX += enemyX_change  # use this to increase the value of player X as the change moves
+    # Create a boundary for the enemy so it does move off the screen
+    if enemyX <= 0:  # When the enemy hits the boundary  from the left side
+        enemyX_change = 0.3  # The enemy will move to the right  to the right direction
+    elif enemyX >= 736:  # When enemy hits boundary on the right
+        enemyX_change = -0.3  # Will then move in diection of the negative side
+        enemyY += enemyY_change  # Enemy will move down everytime the enemy hits the boundary
+
     player(playerX, playerY)
     enemy(enemyX, enemyY)
     pygame.display.update()  # updates the window requirement
