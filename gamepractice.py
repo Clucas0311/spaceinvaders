@@ -1,5 +1,6 @@
 import pygame
 import random
+import math
 
 pygame.init()  # initialize pygame
 screen = pygame.display.set_mode((800, 600))  # size of the window(w x l)
@@ -17,7 +18,7 @@ playerX_change = 0
 
 # Enemy position
 enemy_img = pygame.image.load('ufo.png')
-enemyX = random.randint(0, 800)  # alien position at postion (wideness) generates at random
+enemyX = random.randint(0, 735)  # alien position at postion (wideness) generates at random
 enemyY = random.randint(50, 150)  # alien postion at random   (lenght) generates at random
 enemyX_change = 5
 enemyY_change = 40
@@ -32,6 +33,8 @@ bulletY = 480  # bullet needs to be shot at the top the ship which is about 480
 bulletX_change = 0
 bulletY_change = 10
 bullet_state = 'ready'
+
+score = 0
 
 
 def player(x, y):
@@ -49,6 +52,14 @@ def fire_bullet(x, y):
     bullet_state = "fire"
     # draw the image on the screen and the coordinates we want it to appear
     screen.blit(bullet_img, (x + 16, y + 10))  # plus 16 to appear above it in the middle of ship
+
+
+def is_collision(enemyX, enemyY, bulletX, bulletY):
+    distance = math.sqrt((math.pow(enemyX - bulletX, 2)) + (math.pow(enemyY - bulletY, 2)))
+    if distance < 27:
+        return True
+    else:
+        return False
 
 
 # Game loop
@@ -104,7 +115,14 @@ while game_loop:
     if bullet_state is "fire":  # if the state of the bullet is fire/space bar pressed
         fire_bullet(bulletX, bulletY)  # move the bullet in postion of the spaceship
         bulletY -= bulletY_change  # bullet is going upward * So Y coordinate must decrease
-
+# Collision
+    collision = is_collision(enemyX, enemyY, bulletX, bulletY)
+    if collision:
+        bulletY = 480
+        bullet_state = "ready"
+        score += 1  # increase the value of the score by one everytime we hit our enemy
+        enemyX = random.randint(0, 735)  # Give the enemy a random location once bullet hits them
+        enemyY = random.randint(50, 150)
     player(playerX, playerY)
     enemy(enemyX, enemyY)
     pygame.display.update()  # updates the window requirement
