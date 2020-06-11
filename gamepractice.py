@@ -3,7 +3,8 @@ import random
 
 pygame.init()  # initialize pygame
 screen = pygame.display.set_mode((800, 600))  # size of the window(w x l)
-
+# Backgrond image
+background = pygame.image.load("background.png")
 pygame.display.set_caption("Space Invaders")  # Title and display
 icon = pygame.image.load('alien.png')
 pygame.display.set_icon(icon)
@@ -18,8 +19,19 @@ playerX_change = 0
 enemy_img = pygame.image.load('ufo.png')
 enemyX = random.randint(0, 800)  # alien position at postion (wideness) generates at random
 enemyY = random.randint(50, 150)  # alien postion at random   (lenght) generates at random
-enemyX_change = 1
+enemyX_change = 5
 enemyY_change = 40
+
+# Bullet position
+
+# Ready - You can't see the bullet on the screen
+# Fire - The Bullet is currently moving
+bullet_img = pygame.image.load('bullet.png')
+bulletX = 0  # alien position at postion (wideness) generates at random
+bulletY = 480  # bullet needs to be shot at the top the ship which is about 480
+bulletX_change = 0
+bulletY_change = 10
+bullet_state = 'ready'
 
 
 def player(x, y):
@@ -32,10 +44,19 @@ def enemy(x, y):
     screen.blit(enemy_img, (x, y))
 
 
-    # it needs three parameters the image, and the coordinates of the player
+def fire_bullet(x, y):
+    global bullet_state  # make it global to access bullet state from inside the function
+    bullet_state = "fire"
+    # draw the image on the screen and the coordinates we want it to appear
+    screen.blit(bullet_img, (x + 16, y + 10))  # plus 16 to appear above it
+
+
+# Game loop
 game_loop = True
 while game_loop:
     screen.fill((0, 0, 0))  # colors in RGB
+    # Background image drawn on screan
+    screen.blit(background, (0, 0))
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -45,13 +66,17 @@ while game_loop:
         if event.type == pygame.KEYDOWN:  # to check if a key has been pressed  down
             if event.key == pygame.K_LEFT:  # check the key that is pressed is a left arrow
                 # When the player moves to the left it is dcremented and increase the point sytem as well to make it go faster
-                playerX_change = -1
+                playerX_change = -7
             if event.key == pygame.K_RIGHT:
-                playerX_change = 1  # When the player moves to the right it increases
+                playerX_change = 7  # When the player moves to the right it increases
+            if event.key == pygame.K_SPACE:  # When player hits the space button
+                fire_bullet(playerX, bulletY)
+
         if event. type == pygame.KEYUP:  # Key is released
             if event.key == pygame.K_LEFT or event.key == pygame. K_RIGHT:
                 playerX_change = 0  # to make space ship be at motionless
 
+# Player movement
     playerX += playerX_change  # use this to increase the value of player X as the change moves
     # Create a boundary for the ship so it does move off the screen
     if playerX <= 0:
@@ -59,13 +84,20 @@ while game_loop:
     elif playerX >= 736:
         playerX = 736
 
+# Enemy movement
     enemyX += enemyX_change  # use this to increase the value of player X as the change moves
     # Create a boundary for the enemy so it does move off the screen
     if enemyX <= 0:  # When the enemy hits the boundary  from the left side
-        enemyX_change = 0.3  # The enemy will move to the right  to the right direction
+        enemyX_change = 5  # The enemy will move to the right  to the right direction
+        enemyY += enemyY_change  # As enemy changes it moves the player down
     elif enemyX >= 736:  # When enemy hits boundary on the right
-        enemyX_change = -0.3  # Will then move in diection of the negative side
+        enemyX_change = -5  # Will then move in diection of the negative side
         enemyY += enemyY_change  # Enemy will move down everytime the enemy hits the boundary
+
+# Bullet movement
+    if bullet_state is "fire":  # if the state of the bullet is fire/space bar pressed
+        fire_bullet(playerX, bulletY)  # move the bullet in postion of the spaceship
+        bulletY -= bulletY_change  # bullet is going upward * So Y coordinate must decrease
 
     player(playerX, playerY)
     enemy(enemyX, enemyY)
