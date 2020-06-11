@@ -17,11 +17,20 @@ playerY = 480  # ship postion  top to bottom
 playerX_change = 0
 
 # Enemy position
-enemy_img = pygame.image.load('ufo.png')
-enemyX = random.randint(0, 735)  # alien position at postion (wideness) generates at random
-enemyY = random.randint(50, 150)  # alien postion at random   (lenght) generates at random
-enemyX_change = 5
-enemyY_change = 40
+enemy_img = []  # create an empty list to put enemies into it
+enemyX = []
+enemyY = []
+enemyX_change = []
+enemyY_change = []
+num_of_enemies = 6
+
+for i in range(num_of_enemies):  # create a loop to append items to list so multple enemies can occur
+    enemy_img .append(pygame.image.load('ufo.png'))
+    # alien position at postion (wideness) generates at random
+    enemyX.append(random.randint(0, 735))
+    enemyY.append(random.randint(50, 150))  # alien postion at random   (lenght) generates at random
+    enemyX_change.append(5)
+    enemyY_change.append(40)
 
 # Bullet position
 
@@ -42,9 +51,9 @@ def player(x, y):
     screen.blit(player_img, (x, y))
 
 
-def enemy(x, y):
+def enemy(x, y, i):
     # screen.blit means to draw the image on the screen
-    screen.blit(enemy_img, (x, y))
+    screen.blit(enemy_img[i], (x, y))
 
 
 def fire_bullet(x, y):
@@ -54,6 +63,7 @@ def fire_bullet(x, y):
     screen.blit(bullet_img, (x + 16, y + 10))  # plus 16 to appear above it in the middle of ship
 
 
+# Created a distance formula for the hitting of the bullet with the ship
 def is_collision(enemyX, enemyY, bulletX, bulletY):
     distance = math.sqrt((math.pow(enemyX - bulletX, 2)) + (math.pow(enemyY - bulletY, 2)))
     if distance < 27:
@@ -99,14 +109,29 @@ while game_loop:
         playerX = 736
 
 # Enemy movement
-    enemyX += enemyX_change  # use this to increase the value of player X as the change moves
-    # Create a boundary for the enemy so it does move off the screen
-    if enemyX <= 0:  # When the enemy hits the boundary  from the left side
-        enemyX_change = 5  # The enemy will move to the right  to the right direction
-        enemyY += enemyY_change  # As enemy changes it moves the player down
-    elif enemyX >= 736:  # When enemy hits boundary on the right
-        enemyX_change = -5  # Will then move in diection of the negative side
-        enemyY += enemyY_change  # Enemy will move down everytime the enemy hits the boundary
+    for i in range(num_of_enemies):  # index so we can determine which enemy is which
+        # use this to increase the value of player X as the change moves
+        enemyX[i] += enemyX_change[i]
+        # Create a boundary for the enemy so it does move off the screen
+        if enemyX[i] <= 0:  # When the enemy hits the boundary  from the left side
+            enemyX_change[i] = 5  # The enemy will move to the right  to the right direction
+            enemyY += enemyY_change  # As enemy changes it moves the player down
+        elif enemyX[i] >= 736:  # When enemy hits boundary on the right
+            enemyX_change[i] = -5  # Will then move in diection of the negative side
+            # Enemy will move down everytime the enemy hits the boundary
+            enemyY[i] += enemyY_change[i]
+
+            # Collision
+        collision = is_collision(enemyX[i], enemyY[i], bulletX, bulletY)
+        if collision:  # if a collision has a occured
+            bulletY = 480  # Reset Y coordinate to 480 - starting location of spaceship
+            bullet_state = "ready"  # Get The bullet state back in to ready to fire once again
+            score += 1  # increase the value of the score by one everytime we hit our enemy
+            print(score)
+            # When you shoot the enemy he responds into a new place
+            enemyX[i] = random.randint(0, 735)
+            enemyY[i] = random.randint(50, 150)
+        enemy(enemyX[i], enemyY[i], i)
 
 # Bullet movement
     if bulletY <= 0:  # When the bullet shot is less than zero
@@ -115,14 +140,6 @@ while game_loop:
     if bullet_state is "fire":  # if the state of the bullet is fire/space bar pressed
         fire_bullet(bulletX, bulletY)  # move the bullet in postion of the spaceship
         bulletY -= bulletY_change  # bullet is going upward * So Y coordinate must decrease
-# Collision
-    collision = is_collision(enemyX, enemyY, bulletX, bulletY)
-    if collision:
-        bulletY = 480
-        bullet_state = "ready"
-        score += 1  # increase the value of the score by one everytime we hit our enemy
-        enemyX = random.randint(0, 735)  # Give the enemy a random location once bullet hits them
-        enemyY = random.randint(50, 150)
+
     player(playerX, playerY)
-    enemy(enemyX, enemyY)
     pygame.display.update()  # updates the window requirement
