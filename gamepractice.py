@@ -48,7 +48,7 @@ def fire_bullet(x, y):
     global bullet_state  # make it global to access bullet state from inside the function
     bullet_state = "fire"
     # draw the image on the screen and the coordinates we want it to appear
-    screen.blit(bullet_img, (x + 16, y + 10))  # plus 16 to appear above it
+    screen.blit(bullet_img, (x + 16, y + 10))  # plus 16 to appear above it in the middle of ship
 
 
 # Game loop
@@ -70,7 +70,10 @@ while game_loop:
             if event.key == pygame.K_RIGHT:
                 playerX_change = 7  # When the player moves to the right it increases
             if event.key == pygame.K_SPACE:  # When player hits the space button
-                fire_bullet(playerX, bulletY)
+                if bullet_state is "ready":  # When you first hit the spacebar it check if bullet is on the screen or not
+                    # if not on the screen it would then get the x coodinate of the spaceship
+                    bulletX = playerX  # Once the space has been pressed we save the current bullet x coodinate in the playerX position
+                    fire_bullet(bulletX, bulletY)  # Fire bullet is triggerd
 
         if event. type == pygame.KEYUP:  # Key is released
             if event.key == pygame.K_LEFT or event.key == pygame. K_RIGHT:
@@ -95,8 +98,11 @@ while game_loop:
         enemyY += enemyY_change  # Enemy will move down everytime the enemy hits the boundary
 
 # Bullet movement
+    if bulletY <= 0:  # When the bullet shot is less than zero
+        bulletY = 480  # reset the bullet to 480
+        bullet_state = "ready"  # The bullt state is at ready, so you are allowed to shoot again
     if bullet_state is "fire":  # if the state of the bullet is fire/space bar pressed
-        fire_bullet(playerX, bulletY)  # move the bullet in postion of the spaceship
+        fire_bullet(bulletX, bulletY)  # move the bullet in postion of the spaceship
         bulletY -= bulletY_change  # bullet is going upward * So Y coordinate must decrease
 
     player(playerX, playerY)
