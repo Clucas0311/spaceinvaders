@@ -43,7 +43,17 @@ bulletX_change = 0
 bulletY_change = 10
 bullet_state = 'ready'
 
-score = 0
+# Score
+score_value = 0
+font = pygame.font.Font('freesansbold.ttf', 32)
+
+textX = 10
+textY = 10
+
+
+def show_score(x, y):
+    score = font.render("Score: " + str(score_value), True, (255, 255, 255))
+    screen.blit(score, (x, y))
 
 
 def player(x, y):
@@ -126,8 +136,7 @@ while game_loop:
         if collision:  # if a collision has a occured
             bulletY = 480  # Reset Y coordinate to 480 - starting location of spaceship
             bullet_state = "ready"  # Get The bullet state back in to ready to fire once again
-            score += 1  # increase the value of the score by one everytime we hit our enemy
-            print(score)
+            score_value += 1  # increase the value of the score by one everytime we hit our enemy
             # When you shoot the enemy he responds into a new place
             enemyX[i] = random.randint(0, 735)
             enemyY[i] = random.randint(50, 150)
@@ -142,4 +151,5 @@ while game_loop:
         bulletY -= bulletY_change  # bullet is going upward * So Y coordinate must decrease
 
     player(playerX, playerY)
+    show_score(textX, textY)
     pygame.display.update()  # updates the window requirement
