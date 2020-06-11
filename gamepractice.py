@@ -1,14 +1,20 @@
 import pygame
 import random
 import math
+from pygame import mixer  # allows us to import music into pygame
 
 pygame.init()  # initialize pygame
 screen = pygame.display.set_mode((800, 600))  # size of the window(w x l)
+
 # Backgrond image
 background = pygame.image.load("background.png")
 pygame.display.set_caption("Space Invaders")  # Title and display
 icon = pygame.image.load('alien.png')
 pygame.display.set_icon(icon)
+
+# Background sound
+mixer.music.load('background.wav')  # uploads music
+mixer.music.play(-1)  # plays music add minus one to play on loop
 
 # Player
 player_img = pygame.image.load('space-invaders.png')
@@ -45,14 +51,18 @@ bullet_state = 'ready'
 
 # Score
 score_value = 0
-font = pygame.font.Font('freesansbold.ttf', 32)
+font = pygame.font.Font('freesansbold.ttf', 32)  # selection of the font and the size
 
+# Created x and y coordinates of the font where we want it to appear
 textX = 10
 textY = 10
 
 
 def show_score(x, y):
+    # Render the font how we wanted it to display on the screen
+    # and chose the score value and the color we wanted to appear
     score = font.render("Score: " + str(score_value), True, (255, 255, 255))
+    # drew the score on the screen
     screen.blit(score, (x, y))
 
 
@@ -102,6 +112,8 @@ while game_loop:
                 playerX_change = 7  # When the player moves to the right it increases
             if event.key == pygame.K_SPACE:  # When player hits the space button
                 if bullet_state is "ready":  # When you first hit the spacebar it check if bullet is on the screen or not
+                    bullet_sound = mixer.Sound("laser.wav")
+                    bullet_sound.play()
                     # if not on the screen it would then get the x coodinate of the spaceship
                     bulletX = playerX  # Once the space has been pressed we save the current bullet x coodinate in the playerX position
                     fire_bullet(bulletX, bulletY)  # Fire bullet is triggerd
@@ -134,6 +146,8 @@ while game_loop:
             # Collision
         collision = is_collision(enemyX[i], enemyY[i], bulletX, bulletY)
         if collision:  # if a collision has a occured
+            explosion_sound = mixer.Sound("explosion.wav")
+            explosion_sound.play()
             bulletY = 480  # Reset Y coordinate to 480 - starting location of spaceship
             bullet_state = "ready"  # Get The bullet state back in to ready to fire once again
             score_value += 1  # increase the value of the score by one everytime we hit our enemy
